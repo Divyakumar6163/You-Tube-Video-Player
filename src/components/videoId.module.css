@@ -1,0 +1,96 @@
+.videoId {
+    /* background: #C7B198; */
+    /* min-height: 90vh; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* justify-content: center; */
+}
+
+.form {
+    background-color: #C1A57B;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    width: 20vw;
+    height: 30vh;
+    border-radius: 10px;
+    border: #6F0000 4px solid;
+    box-shadow: #280101 0px 0px 10px 5px;
+    padding: 20px;
+    /* margin-top: 20px; */
+}
+
+.h1 {
+    font-family: "Baloo 2", sans-serif;
+    font-size: 5vh;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 1rem;
+}
+
+.input {
+    align-self: center;
+    width: 15vw;
+}
+
+.input:focus {
+    box-shadow: 0 0 3px 3px #e40404;
+}
+
+.pStart {
+    font-family: "Baloo 2", sans-serif;
+    font-size: 6vh;
+    font-weight: bold;
+    margin-top: 2rem;
+}
+
+.pDes {
+    font-family: "Baloo 2", sans-serif;
+    font-size: 3vh;
+    font-weight: 500;
+    margin-top: 1rem;
+}
+
+.button {
+    background-color: #390202;
+    border: 5px solid #b94807;
+    color: white;
+    padding: 1rem 2rem;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1rem;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 25px;
+    box-shadow: black 0px 0px 10px 5px;
+    width: 20rem;
+}
+
+.button:hover {
+    background-color: #280101;
+    box-shadow: none;
+}
+
+.buttonSubmit {
+    background-color: #390202;
+    border: 5px solid #b94807;
+    color: white;
+    padding: 1rem 2rem;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1rem;
+    margin: 1rem;
+    cursor: pointer;
+    border-radius: 25px;
+    box-shadow: none;
+    width: 10rem;
+    align-self: center;
+}
+
+.buttonSubmit:hover {
+    background-color: #280101;
+    box-shadow: black 0px 0px 10px 5px;
+}
