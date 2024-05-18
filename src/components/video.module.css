@@ -2,43 +2,121 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 20px;
+    padding: 20px;
+    /* background: linear-gradient(#C7B198, #F0ECE3); */
+    min-height: 100vh;
+}
 
+.videoFrame {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    width: 80%;
+}
+
+.iframe {
+    width: 100%;
+    height: 60vh;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .videoMain {
     display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    margin: 3vh;
-    width: 40vw;
-    justify-self: center;
-    background-color: #C1A57B;
-    height: max-content;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    width: 80vw;
+    background: #fff;
     border-radius: 10px;
-    border: #6F0000 4px solid;
-    box-shadow: #280101 0px 0px 10px 5px;
-    padding: 2vh 2vw 2vh 2vw;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 1);
+    padding: 20px;
+}
+
+.title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.title h1 {
+    font-family: "Baloo 2", sans-serif;
+    font-size: 2.5vw;
+    font-weight: bold;
+}
+
+.title p {
+    font-family: "Baloo 2", sans-serif;
+    font-size: 1.2vw;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.backButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 1px solid #ccc;
+    color: #4A5568;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 1rem;
+    margin: 10px;
+    cursor: pointer;
+    border-radius: 25px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    width: 8vw;
+    position: absolute;
+    top: 100px;
+    left: 10px;
+}
+
+.backButton:hover {
+    background-color: #f0f0f0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .button {
-    background-color: #390202;
-    border: 5px solid #b94807;
-    color: white;
-    padding: 1vw 1vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 1px solid #ccc;
+    color: #4A5568;
+    padding: 10px 20px;
     text-align: center;
     text-decoration: none;
-    display: inline-block;
+    display: inline-flex;
     font-size: 1rem;
-    margin: 4px 2px;
+    margin: 10px;
     cursor: pointer;
     border-radius: 25px;
-    box-shadow: black 0px 0px 10px 5px;
-    width: 12vw;
-    height: 8vh;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    width: auto;
 }
 
 .button:hover {
-    background-color: #280101;
-    box-shadow: none;
+    background-color: #f0f0f0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.icon {
+    margin-right: 10px;
+    font-size: 1.2rem;
+}
+
+.viewNotesContainer {
+    width: 100%;
+    border-top: 1px solid #ccc;
+    padding-top: 20px;
+    display: flex;
+    justify-content: center;
 }

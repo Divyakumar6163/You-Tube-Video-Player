@@ -1,4 +1,5 @@
 import style from "./videoId.module.css";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 export default function VideoId({
   setVideoId,
@@ -6,6 +7,7 @@ export default function VideoId({
   setIsSubmit,
   // isSubmit,
 }) {
+  const navigate = useNavigate();
   const [videoIdInput, setVideoIdInput] = useState(false);
   const [isFirst, setIsFirst] = useState(true);
   const handleChange = (e) => {
@@ -16,6 +18,7 @@ export default function VideoId({
     e.preventDefault();
     setIsSubmit(true);
     setVideoIdInput(false);
+    navigate("/content");
   }
   function handleID() {
     setIsFirst(false);

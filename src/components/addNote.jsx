@@ -7,9 +7,7 @@ const AddNote = ({ videoId, currentTime, setIsAdd }) => {
   function handleData(e) {
     setData(e.target.value);
   }
-  function handleClose() {
-    setIsAdd(false);
-  }
+
   function handleAdd() {
     setIsAdd(false);
     const storedData = localStorage.getItem(videoId);
@@ -27,17 +25,19 @@ const AddNote = ({ videoId, currentTime, setIsAdd }) => {
   }
   return (
     <div className={style.addNote}>
-      <ImCross onClick={handleClose} style={{ cursor: "pointer" }} />
+      {/* <ImCross onClick={handleClose} style={{ cursor: "pointer" }} /> */}
       <h1 className={style.h1}>Add Note</h1>
-      <textarea
-        className={style.textarea}
-        onChange={handleData}
-        placeholder="Add Note"
-        required
-      ></textarea>
-      <button onClick={handleAdd} className={style.button}>
-        Add
-      </button>
+      <div className={style.inputContainer}>
+        <textarea
+          className={style.textarea}
+          onChange={handleData}
+          placeholder="Add Note"
+          required
+        ></textarea>
+        <button onClick={handleAdd} className={style.button}>
+          Add
+        </button>
+      </div>
     </div>
   );
 };

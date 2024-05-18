@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Route, BrowserRouter, Routes } from "react-router-dom";
 import style from "./app.module.css";
 import Header from "./components/header";
 import Video from "./components/video";
@@ -9,18 +10,28 @@ function App() {
   return (
     <div>
       <Header />
-      <div className={style.app}>
-        <VideoID
-          className={style.videoID}
-          videoId={videoId}
-          setVideoId={setVideoId}
-          setIsSubmit={setIsSubmit}
-          isSubmit={isSubmit}
-        />
-        {videoId && isSubmit && (
-          <Video videoId={videoId} className={style.video} />
-        )}
-      </div>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <VideoID
+                className={style.videoID}
+                videoId={videoId}
+                setVideoId={setVideoId}
+                setIsSubmit={setIsSubmit}
+                isSubmit={isSubmit}
+              />
+            }
+          />
+          {videoId && isSubmit && (
+            <Route
+              path="/content"
+              element={<Video videoId={videoId} className={style.video} />}
+            />
+          )}
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }

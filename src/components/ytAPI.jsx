@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 
 const YoutubePlayer = ({ videoId, startTime, url }) => {
-  const playerRef = useRef(url);
+  const playerRef = useRef(null);
   const [currentTime, setCurrentTime] = useState(0);
 
   useEffect(() => {
@@ -27,11 +27,11 @@ const YoutubePlayer = ({ videoId, startTime, url }) => {
     };
 
     // Clean up function
-    // return () => {
-    //   if (playerRef.current) {
-    //     playerRef.current.destroy();
-    //   }
-    // };
+    return () => {
+      if (playerRef.current) {
+        playerRef.current.destroy();
+      }
+    };
   }, [videoId, startTime]);
 
   const onPlayerReady = (event) => {
