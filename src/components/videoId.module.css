@@ -11,19 +11,17 @@
     background-color: #C1A57B;
     display: flex;
     flex-direction: column;
-    /* justify-content: center; */
     width: 20vw;
     height: 30vh;
     border-radius: 10px;
     border: #6F0000 4px solid;
     box-shadow: #280101 0px 0px 10px 5px;
     padding: 20px;
-    /* margin-top: 20px; */
 }
 
 .h1 {
     font-family: "Baloo 2", sans-serif;
-    font-size: 5vh;
+    font-size: 2.5vw;
     text-align: center;
     font-weight: bold;
     margin-top: 1rem;
@@ -86,7 +84,7 @@
     cursor: pointer;
     border-radius: 25px;
     box-shadow: none;
-    width: 10rem;
+    width: 10vw;
     align-self: center;
 }
 
