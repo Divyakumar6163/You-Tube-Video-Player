@@ -1,5 +1,6 @@
 import style from "./videoId.module.css";
 import { useNavigate } from "react-router-dom";
+import { ImCross } from "react-icons/im";
 import { useState } from "react";
 export default function VideoId({
   setVideoId,
@@ -24,11 +25,17 @@ export default function VideoId({
     setIsFirst(false);
     setVideoIdInput(true);
   }
+  function handleCancel() {
+    setVideoIdInput(false);
+    setIsSubmit(false);
+    setVideoId("");
+  }
   console.log(videoId);
   return (
     <div className={style.videoId}>
       {videoIdInput && (
         <form onSubmit={handleSubmit} className={style.form}>
+          <ImCross onClick={handleCancel} style={{ position: "absolute" }} />
           <h1 className={style.h1}> Video ID</h1>
           {/* <label htmlFor="" className={style.label}>
             Video ID

@@ -1,20 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 
-const YoutubePlayer = ({ videoId, startTime, url }) => {
+const YouTubePlayer = ({ videoId, setCurrentTimer, startTime, isChange }) => {
   const playerRef = useRef(null);
   const [currentTime, setCurrentTime] = useState(0);
 
   useEffect(() => {
-    // Load the YouTube IFrame Player API
-    const tag = document.createElement("script");
-    tag.src = "https://www.youtube.com/iframe_api";
-    const firstScriptTag = document.getElementsByTagName("script")[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-    // Initialize the YouTube player when API is ready
-    window.onYouTubeIframeAPIReady = () => {
+    const onYouTubeIframeAPIReady = () => {
       playerRef.current = new window.YT.Player("youtube-player", {
-        videoId: videoId,
+        videoId,
         playerVars: {
           autoplay: 1,
           start: startTime,
@@ -26,38 +19,43 @@ const YoutubePlayer = ({ videoId, startTime, url }) => {
       });
     };
 
-    // Clean up function
+    if (!window.YT) {
+      window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+    } else {
+      onYouTubeIframeAPIReady();
+    }
+
     return () => {
       if (playerRef.current) {
         playerRef.current.destroy();
       }
     };
-  }, [videoId, startTime]);
+  }, [videoId, startTime, isChange]);
 
-  const onPlayerReady = (event) => {
-    // You can add additional event handling here if needed
-  };
+  const onPlayerReady = (event) => {};
 
   const onPlayerStateChange = (event) => {
     if (event.data === window.YT.PlayerState.PLAYING) {
-      // Start a timer to update the current time
-      const interval = setInterval(() => {
-        setCurrentTime(playerRef.current.getCurrentTime());
-      }, 1000);
-      console.log(interval);
-      // Clear the interval when the video stops playing
+      const interval = setInterval(
+        () => setCurrentTime(event.target.getCurrentTime()),
+        1000
+      );
       return () => clearInterval(interval);
     }
   };
-  //   console.log(
-  console.log(currentTime);
+
+  useEffect(() => {
+    setCurrentTimer(currentTime.toFixed(0));
+  }, [currentTime, setCurrentTimer]);
+
   return (
     <div>
-      <h1>YouTube Player</h1>
-      <div id="youtube-player"></div>
-      <p>Current Time: {currentTime}</p>
+      <div
+        id="youtube-player"
+        style={{ width: "80vw", height: "60vh", borderRadius: "10px" }}
+      ></div>
     </div>
   );
 };
 
-export default YoutubePlayer;
+export default YouTubePlayer;

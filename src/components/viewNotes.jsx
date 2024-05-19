@@ -1,10 +1,16 @@
-import style from "./viewNotes.module.css";
-import { ImCross } from "react-icons/im";
-import { MdDelete } from "react-icons/md";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import CurrentDate from "./currDate.jsx";
+import style from "./viewNotes.module.css";
 
-export default function ViewNotes({ videoId, setIsView, isAdd }) {
+export default function ViewNotes({
+  videoId,
+  currentTime,
+  setIsView,
+  isAdd,
+  setStartTime,
+  setIsChange,
+  setCurrentTime,
+}) {
   const [notes, setNotes] = useState([]);
   const [editedNote, setEditedNote] = useState({ id: null, note: "" });
 
@@ -31,6 +37,25 @@ export default function ViewNotes({ videoId, setIsView, isAdd }) {
     setEditedNote({ id: null, note: "" });
   }
 
+  function handleStartTime(time) {
+    const hoursMatch = time.match(/(\d+)\s*hr/);
+    const minutesMatch = time.match(/(\d+)\s*min/);
+    const secondsMatch = time.match(/(\d+)\s*sec/);
+    const hours = hoursMatch ? parseInt(hoursMatch[1], 10) : 0;
+    const minutes = minutesMatch ? parseInt(minutesMatch[1], 10) : 0;
+    const seconds = secondsMatch ? parseInt(secondsMatch[1], 10) : 0;
+    const timeSec = hours * 3600 + minutes * 60 + seconds;
+
+    // Clear and then set the current time
+    setStartTime(0);
+    setCurrentTime(0);
+    setTimeout(() => {
+      setCurrentTime(timeSec);
+      setStartTime(timeSec);
+      setIsChange((prev) => !prev);
+    }, 10);
+  }
+
   function handleCancelEdit() {
     setEditedNote({ id: null, note: "" });
   }
@@ -55,7 +80,15 @@ export default function ViewNotes({ videoId, setIsView, isAdd }) {
           notes.map((note) => (
             <div key={note.id} className={style.list}>
               <CurrentDate />
-              <p className={style.pTime}>Timestamp: {note.time}</p>
+              <p className={style.pTime}>
+                Timestamp:{" "}
+                <span
+                  className={style.pTimeSpan}
+                  onClick={() => handleStartTime(note.time)}
+                >
+                  {note.time}
+                </span>
+              </p>
               {editedNote.id === note.id ? (
                 <input
                   className={style.pNote}

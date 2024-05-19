@@ -8,14 +8,13 @@
 }
 
 .form {
-    background-color: #C1A57B;
+    /* background-color: #C1A57B; */
     display: flex;
     flex-direction: column;
     width: 20vw;
     height: 30vh;
     border-radius: 10px;
-    border: #6F0000 4px solid;
-    box-shadow: #280101 0px 0px 10px 5px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 1);
     padding: 20px;
 }
 
@@ -33,7 +32,7 @@
 }
 
 .input:focus {
-    box-shadow: 0 0 3px 3px #e40404;
+    box-shadow: 0 0 3px 3px #cccccc00;
 }
 
 .pStart {
@@ -51,8 +50,6 @@
 }
 
 .button {
-    background-color: #390202;
-    border: 5px solid #b94807;
     color: white;
     padding: 1rem 2rem;
     text-align: center;
@@ -62,33 +59,39 @@
     margin: 4px 2px;
     cursor: pointer;
     border-radius: 25px;
-    box-shadow: black 0px 0px 10px 5px;
+    box-shadow: rgb(60, 60, 60) 0px 0px 10px 5px;
+    background-color: white;
+    border: 1px solid #cccccc00;
+    color: #070707;
     width: 20rem;
 }
 
 .button:hover {
-    background-color: #280101;
-    box-shadow: none;
+    background-color: #cfcccc;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .buttonSubmit {
-    background-color: #390202;
-    border: 5px solid #b94807;
-    color: white;
-    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 1px solid #cccccc00;
+    color: #4A5568;
+    padding: 10px 20px;
     text-align: center;
     text-decoration: none;
-    display: inline-block;
+    display: inline-flex;
     font-size: 1rem;
-    margin: 1rem;
+    margin: 20px;
     cursor: pointer;
     border-radius: 25px;
-    box-shadow: none;
-    width: 10vw;
-    align-self: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, .5);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    width: auto;
 }
 
 .buttonSubmit:hover {
-    background-color: #280101;
-    box-shadow: black 0px 0px 10px 5px;
+    background-color: #f0f0f0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
