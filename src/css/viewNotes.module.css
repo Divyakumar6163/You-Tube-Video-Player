@@ -57,6 +57,27 @@
     width: 75vw;
 }
 
+.inputAndImage {
+    display: flex;
+    flex-direction: column;
+}
+
+.img {
+    width: 20vw;
+    max-height: 20vh;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+}
+
+.inputFile {
+    margin-bottom: 1vh;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    width: 20vw;
+}
+
 .buttons {
     display: flex;
     justify-content: flex-end;

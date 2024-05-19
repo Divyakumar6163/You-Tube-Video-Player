@@ -1,0 +1,68 @@
+.cinemaReel {
+    overflow: hidden;
+    white-space: nowrap;
+    background-color: #e9e6e6;
+    padding: 20px 0;
+    width: 100vw;
+    position: absolute;
+    left: 0vw;
+    bottom: 0vh;
+    opacity: 0.8;
+}
+
+.cinemaReel::before,
+.cinemaReel::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 150px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.cinemaReel::before {
+    left: 0;
+    background: linear-gradient(to right, rgba(161, 157, 157, 0.8), transparent);
+}
+
+.cinemaReel::after {
+    right: 0;
+    background: linear-gradient(to left, rgba(161, 157, 157, 0.8), transparent);
+}
+
+.reel {
+    display: flex;
+    animation: animate 20s linear infinite;
+}
+
+@keyframes animate {
+    0% {
+        transform: translateX(0%);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.reelImage {
+    width: 18vw;
+    height: auto;
+    margin-right: 20px;
+    border-radius: 10px;
+}
+
+@media (max-width: 900px) {
+    .reelImage {
+        height: 10rem;
+        width: 10rem;
+    }
+}
+
+@media (max-width: 450px) {
+    .reelImage {
+        height: 5rem;
+        width: 5rem;
+    }
+}

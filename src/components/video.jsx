@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { CiCirclePlus } from "react-icons/ci";
 import AddNotes from "./addNote";
 import ViewNotes from "./viewNotes";
-import style from "./video.module.css";
+import style from ".././css/video.module.css";
 import YouTubePlayer from "./ytAPI.jsx";
 import VideoDetails from "./videoData.jsx";
 const Video = ({ videoId }) => {
@@ -39,7 +39,6 @@ const Video = ({ videoId }) => {
           setStartTime={setStartTime}
           isChange={isChange}
         />
-        <p>Current Time: {currentTime} seconds</p>
       </div>
       <div className={style.videoFrame}>
         <VideoDetails videoId={videoId} />

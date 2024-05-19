@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 const YouTubePlayer = ({ videoId, setCurrentTimer, startTime, isChange }) => {
   const playerRef = useRef(null);
   const [currentTime, setCurrentTime] = useState(0);
+  const [playerReady, setPlayerReady] = useState(false);
 
   useEffect(() => {
     const onYouTubeIframeAPIReady = () => {
@@ -13,7 +14,7 @@ const YouTubePlayer = ({ videoId, setCurrentTimer, startTime, isChange }) => {
           start: startTime,
         },
         events: {
-          onReady: onPlayerReady,
+          onReady: () => setPlayerReady(true),
           onStateChange: onPlayerStateChange,
         },
       });
@@ -30,9 +31,13 @@ const YouTubePlayer = ({ videoId, setCurrentTimer, startTime, isChange }) => {
         playerRef.current.destroy();
       }
     };
-  }, [videoId, startTime, isChange]);
+  }, [videoId]);
 
-  const onPlayerReady = (event) => {};
+  useEffect(() => {
+    if (playerReady && playerRef.current && playerRef.current.seekTo) {
+      playerRef.current.seekTo(startTime);
+    }
+  }, [startTime, playerReady, videoId]);
 
   const onPlayerStateChange = (event) => {
     if (event.data === window.YT.PlayerState.PLAYING) {

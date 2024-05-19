@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Route, BrowserRouter, Routes } from "react-router-dom";
-import style from "./app.module.css";
+import style from "./App.module.css";
 import Header from "./components/header";
 import Video from "./components/video";
 import VideoID from "./components/videoID";
@@ -26,7 +26,7 @@ function App() {
           />
           {videoId && isSubmit && (
             <Route
-              path="/content"
+              path="/:id"
               element={<Video videoId={videoId} className={style.video} />}
             />
           )}

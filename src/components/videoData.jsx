@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
+import style from ".././css/videoData.module.css";
 const YOUTUBE_API_KEY = "AIzaSyAvCFNw-ZJN693l5_16WGkXjLDiUs5IRTA";
 
 const fetchVideoDetails = async (videoId) => {
@@ -32,13 +32,13 @@ const VideoDetails = ({ videoId }) => {
     getVideoDetails();
   }, [videoId]);
   if (!videoDetails) {
-    return <div>Loading...</div>;
+    return <div className={style.load}>Loading...</div>;
   }
 
   return (
-    <div>
-      <h1>{videoDetails.title}</h1>
-      <p>{videoDetails.description}</p>
+    <div className={style.div}>
+      <h1 className={style.h1}>{videoDetails.title}</h1>
+      <p className={style.p}>{videoDetails.description}</p>
     </div>
   );
 };

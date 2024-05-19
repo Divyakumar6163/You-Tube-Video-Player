@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import CurrentDate from "./currDate.jsx";
-import style from "./viewNotes.module.css";
+import style from ".././css/viewNotes.module.css";
 
 export default function ViewNotes({
   videoId,
-  currentTime,
   setIsView,
   isAdd,
   setStartTime,
@@ -12,7 +13,13 @@ export default function ViewNotes({
   setCurrentTime,
 }) {
   const [notes, setNotes] = useState([]);
-  const [editedNote, setEditedNote] = useState({ id: null, note: "" });
+  const [editedNote, setEditedNote] = useState({
+    id: null,
+    note: "",
+    base64File: "",
+  });
+  const [errorMessage, setErrorMessage] = useState("");
+  const quillRef = useRef(null);
 
   useEffect(() => {
     const storedData = localStorage.getItem(videoId);
@@ -24,17 +31,32 @@ export default function ViewNotes({
   function handleEdit(id) {
     setIsView(true);
     const noteToEdit = notes.find((note) => note.id === id);
-    setEditedNote({ id: id, note: noteToEdit.note });
+    setEditedNote({ ...noteToEdit });
+    setErrorMessage("");
   }
 
   function handleSaveEdit() {
+    if (quillRef.current) {
+      const quill = quillRef.current.getEditor();
+      const unprivilegedEditor = quillRef.current.makeUnprivilegedEditor(quill);
+      const editorContent = unprivilegedEditor.getText().trim();
+
+      if (editorContent.length === 0) {
+        setErrorMessage("*Please Write Something as a Note.");
+        return;
+      }
+    }
+
     const updatedNotes = notes.map((note) =>
-      note.id === editedNote.id ? { ...note, note: editedNote.note } : note
+      note.id === editedNote.id
+        ? { ...note, note: editedNote.note, base64File: editedNote.base64File }
+        : note
     );
     setNotes(updatedNotes);
     localStorage.setItem(videoId, JSON.stringify(updatedNotes));
     setIsView(true);
-    setEditedNote({ id: null, note: "" });
+    setEditedNote({ id: null, note: "", base64File: "" });
+    setErrorMessage("");
   }
 
   function handleStartTime(time) {
@@ -46,18 +68,18 @@ export default function ViewNotes({
     const seconds = secondsMatch ? parseInt(secondsMatch[1], 10) : 0;
     const timeSec = hours * 3600 + minutes * 60 + seconds;
 
-    // Clear and then set the current time
     setStartTime(0);
     setCurrentTime(0);
     setTimeout(() => {
       setCurrentTime(timeSec);
       setStartTime(timeSec);
       setIsChange((prev) => !prev);
-    }, 10);
+    }, 0);
   }
 
   function handleCancelEdit() {
-    setEditedNote({ id: null, note: "" });
+    setEditedNote({ id: null, note: "", base64File: "" });
+    setErrorMessage("");
   }
 
   function handleDelete(id) {
@@ -90,18 +112,64 @@ export default function ViewNotes({
                 </span>
               </p>
               {editedNote.id === note.id ? (
-                <input
-                  className={style.pNote}
-                  value={editedNote.note}
-                  onChange={(e) =>
-                    setEditedNote({
-                      ...editedNote,
-                      note: e.target.value,
-                    })
-                  }
-                />
+                <>
+                  <ReactQuill
+                    ref={quillRef}
+                    className={style.pNote}
+                    placeholder="Enter Note"
+                    theme="snow"
+                    value={editedNote.note}
+                    onChange={(value) =>
+                      setEditedNote({
+                        ...editedNote,
+                        note: value,
+                      })
+                    }
+                  />
+                  <div className={style.inputAndImage}>
+                    <input
+                      className={style.inputFile}
+                      type="file"
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setEditedNote({
+                            ...editedNote,
+                            base64File: reader.result,
+                          });
+                        };
+                        if (file) {
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                    {editedNote.base64File && (
+                      <img
+                        src={editedNote.base64File}
+                        alt="File Not Found"
+                        className={style.img}
+                      />
+                    )}
+                  </div>
+                </>
               ) : (
-                <p className={style.pNote}>{note.note}</p>
+                <>
+                  <p
+                    className={style.pNote}
+                    dangerouslySetInnerHTML={{ __html: note.note }}
+                  ></p>
+                  {note.base64File && (
+                    <img
+                      src={note.base64File}
+                      alt="File Not Found"
+                      className={style.img}
+                    />
+                  )}
+                </>
+              )}
+              {errorMessage && editedNote.id === note.id && (
+                <p style={{ color: "red" }}>{errorMessage}</p>
               )}
               <div className={style.buttons}>
                 {editedNote.id === note.id ? (
