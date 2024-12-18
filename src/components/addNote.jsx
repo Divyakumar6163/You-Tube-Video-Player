@@ -35,7 +35,6 @@ const AddNote = ({ videoId, currentTime, setIsAdd }) => {
         const editorContent = unprivilegedEditor.getText();
         setIsPlaceholderVisible(editorContent.trim().length === 0);
       };
-
       quill.on("text-change", handleChange);
 
       return () => {
@@ -109,5 +108,4 @@ const AddNote = ({ videoId, currentTime, setIsAdd }) => {
     </div>
   );
 };
-
 export default AddNote;

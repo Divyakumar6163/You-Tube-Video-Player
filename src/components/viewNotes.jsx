@@ -26,7 +26,7 @@ export default function ViewNotes({
     if (storedData) {
       setNotes(JSON.parse(storedData));
     }
-  }, [videoId, isAdd]);
+  }, [videoId, isAdd]); //If I clicked on ADD button then isAdd will get change.
 
   function handleEdit(id) {
     setIsView(true);
