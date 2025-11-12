@@ -4,7 +4,7 @@ import style from ".././css/videoData.module.css";
 const YOUTUBE_API_KEY = "AIzaSyAvCFNw-ZJN693l5_16WGkXjLDiUs5IRTA";
 
 const fetchVideoDetails = async (videoId) => {
-  const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet&key=${YOUTUBE_API_KEY}`;
+  const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet&key=${process.env.YOUTUBE_API_KEY}`;
   try {
     const response = await axios.get(url);
     const videoDetails = response.data.items[0].snippet;

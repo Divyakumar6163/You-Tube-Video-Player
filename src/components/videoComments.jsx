@@ -2,8 +2,6 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import style from "../css/videoComments.module.css";
 
-const YOUTUBE_API_KEY = "AIzaSyAvCFNw-ZJN693l5_16WGkXjLDiUs5IRTA";
-
 const VideoComments = ({ videoId }) => {
   const [comments, setComments] = useState([]);
   const [displayedCount, setDisplayedCount] = useState(10);
@@ -17,37 +15,39 @@ const VideoComments = ({ videoId }) => {
 
   const observerRef = useRef(null);
 
-  const fetchComments = async (pageToken = "") => {
-    try {
-      setLoading(true);
-      setError(null);
-      const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=50&pageToken=${pageToken}&key=${YOUTUBE_API_KEY}`;
-      const res = await axios.get(url);
-      const items = res.data.items || [];
+  const fetchComments = useCallback(
+    async (pageToken = "") => {
+      try {
+        setLoading(true);
+        setError(null);
+        const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=50&pageToken=${pageToken}&key=${process.env.YOUTUBE_API_KEY}`;
+        const res = await axios.get(url);
+        const items = res.data.items || [];
 
-      // ✅ Remove duplicates by ID
-      setComments((prev) => {
-        const existingIds = new Set(prev.map((c) => c.id));
-        const newItems = items.filter((c) => !existingIds.has(c.id));
-        return [...prev, ...newItems];
-      });
+        setComments((prev) => {
+          const existingIds = new Set(prev.map((c) => c.id));
+          const newItems = items.filter((c) => !existingIds.has(c.id));
+          return [...prev, ...newItems];
+        });
 
-      setNextPageToken(res.data.nextPageToken || null);
-    } catch (err) {
-      console.error("Error fetching comments:", err);
-      setError("Unable to load comments.");
-    } finally {
-      setLoading(false);
-    }
-  };
+        setNextPageToken(res.data.nextPageToken || null);
+      } catch (err) {
+        console.error("Error fetching comments:", err);
+        setError("Unable to load comments.");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [videoId]
+  );
 
-  useEffect(() => {
+   useEffect(() => {
     setComments([]);
     setSearchInput("");
     setSearchText("");
     setDisplayedCount(10);
     fetchComments();
-  }, [videoId]);
+  }, [videoId, fetchComments]);
 
   const getPlainText = (html) => {
     const tmp = document.createElement("div");
@@ -128,7 +128,7 @@ const VideoComments = ({ videoId }) => {
           <div className={style.searchGroup}>
             <input
               type="text"
-              placeholder="Search comments (exact phrase)..."
+              placeholder="Search comments..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               className={style.searchInput}
