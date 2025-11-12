@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import style from "../css/videoComments.module.css";
 
@@ -6,13 +6,16 @@ const YOUTUBE_API_KEY = "AIzaSyAvCFNw-ZJN693l5_16WGkXjLDiUs5IRTA";
 
 const VideoComments = ({ videoId }) => {
   const [comments, setComments] = useState([]);
+  const [displayedCount, setDisplayedCount] = useState(10);
   const [nextPageToken, setNextPageToken] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // 🔎 new: separate input vs. committed query
+  // Search states
   const [searchInput, setSearchInput] = useState("");
-  const [query, setQuery] = useState("");
+  const [searchText, setSearchText] = useState("");
+
+  const observerRef = useRef(null);
 
   const fetchComments = async (pageToken = "") => {
     try {
@@ -21,7 +24,14 @@ const VideoComments = ({ videoId }) => {
       const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=50&pageToken=${pageToken}&key=${YOUTUBE_API_KEY}`;
       const res = await axios.get(url);
       const items = res.data.items || [];
-      setComments((prev) => [...prev, ...items]);
+
+      // ✅ Remove duplicates by ID
+      setComments((prev) => {
+        const existingIds = new Set(prev.map((c) => c.id));
+        const newItems = items.filter((c) => !existingIds.has(c.id));
+        return [...prev, ...newItems];
+      });
+
       setNextPageToken(res.data.nextPageToken || null);
     } catch (err) {
       console.error("Error fetching comments:", err);
@@ -33,13 +43,11 @@ const VideoComments = ({ videoId }) => {
 
   useEffect(() => {
     setComments([]);
-    setQuery("");       // reset search on video change
     setSearchInput("");
+    setSearchText("");
+    setDisplayedCount(10);
     fetchComments();
   }, [videoId]);
-
-  // 🧰 helpers
-  const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
   const getPlainText = (html) => {
     const tmp = document.createElement("div");
@@ -47,50 +55,80 @@ const VideoComments = ({ videoId }) => {
     return tmp.textContent || tmp.innerText || "";
   };
 
-  // ✔ exact word match; search only when user submits (query set)
-  const filteredComments = useMemo(() => {
-    console.log("Filtering comments with query:", query);
-    if (!query.trim()) return comments;
-
-    // word-boundary regex (case-insensitive)
-    const rx = new RegExp(`\\b${escapeRegExp(query)}\\b`, "i");
-
-    return comments.filter((c) => {
-      const snippet = c.snippet.topLevelComment.snippet;
-      const text = getPlainText(snippet.textDisplay);
-      return rx.test(text);
-    });
-  }, [comments, query]);
-
-  // ✅ highlight only exact matches when query is set
-  const highlightSearch = (html) => {
-    if (!query.trim()) return html;
-    const rx = new RegExp(`\\b(${escapeRegExp(query)})\\b`, "gi");
-    return html.replace(rx, `<mark class="${style.highlight}">$1</mark>`);
+  const highlightText = (text, phrase) => {
+    if (!phrase.trim()) return text;
+    const regex = new RegExp(
+      `(${phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
+      "gi"
+    );
+    return text.replace(regex, `<mark class="${style.highlight}">$1</mark>`);
   };
 
-  // 🔘 search triggers
+  // ✅ Filter comments only when search is applied
+  const filteredComments =
+    searchText.trim() === ""
+      ? comments
+      : comments.filter((comment) => {
+          const snippet = comment.snippet.topLevelComment.snippet;
+          const plainText = getPlainText(snippet.textDisplay).toLowerCase();
+          return plainText.includes(searchText.toLowerCase());
+        });
+
+  // ✅ Lazy loading handler
+  const loadMoreVisible = useCallback(
+    (entries) => {
+      const [entry] = entries;
+      if (entry.isIntersecting) {
+        setDisplayedCount((prev) => {
+          // ⛔ Prevent unnecessary increments when already all visible
+          if (prev < filteredComments.length) {
+            return prev + 10;
+          }
+          return prev;
+        });
+      }
+    },
+    [filteredComments.length]
+  );
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(loadMoreVisible, {
+      root: null,
+      rootMargin: "0px",
+      threshold: 1.0,
+    });
+    if (observerRef.current) observer.observe(observerRef.current);
+    return () => observer.disconnect();
+  }, [loadMoreVisible, filteredComments.length]);
+
+  // ✅ Search triggers
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    setQuery(searchInput.trim());
+    const trimmed = searchInput.trim();
+    setSearchText(trimmed);
+    setDisplayedCount(10);
   };
 
   const handleClear = () => {
     setSearchInput("");
-    setQuery("");
+    setSearchText("");
+    setDisplayedCount(10);
   };
-  console.log()
+
+  const visibleComments = filteredComments.slice(0, displayedCount);
+  console.log("Filtered comments:", filteredComments);
+  console.log("Visible comments:", visibleComments);
   return (
     <div className={style.outerContainer}>
       <div className={style.container}>
         <h2 className={style.header}>Comments</h2>
 
-        {/* 🔎 Search (submit to apply) */}
+        {/* 🔍 Search bar */}
         <form className={style.searchContainer} onSubmit={handleSearchSubmit}>
           <div className={style.searchGroup}>
             <input
               type="text"
-              placeholder="Search comments (exact word)…"
+              placeholder="Search comments (exact phrase)..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               className={style.searchInput}
@@ -98,8 +136,12 @@ const VideoComments = ({ videoId }) => {
             <button type="submit" className={style.searchButton}>
               Search
             </button>
-            {query && (
-              <button type="button" onClick={handleClear} className={style.clearButton}>
+            {searchText && (
+              <button
+                type="button"
+                onClick={handleClear}
+                className={style.clearButton}
+              >
                 Clear
               </button>
             )}
@@ -113,11 +155,13 @@ const VideoComments = ({ videoId }) => {
         )}
 
         <div className={style.commentsList}>
-          {filteredComments.length > 0 ? (
-            filteredComments.map((comment) => {
+          {visibleComments.length > 0 ? (
+            visibleComments.map((comment, index) => {
               const snippet = comment.snippet.topLevelComment.snippet;
+              const plainText = getPlainText(snippet.textDisplay);
+              const highlightedText = highlightText(plainText, searchText);
               return (
-                <div key={comment.id} className={style.comment}>
+                <div key={`${comment.id}-${index}`} className={style.comment}>
                   <img
                     src={snippet.authorProfileImageUrl}
                     alt={snippet.authorDisplayName}
@@ -136,7 +180,7 @@ const VideoComments = ({ videoId }) => {
                     <p
                       className={style.text}
                       dangerouslySetInnerHTML={{
-                        __html: highlightSearch(snippet.textDisplay),
+                        __html: highlightedText,
                       }}
                     ></p>
 
@@ -149,17 +193,27 @@ const VideoComments = ({ videoId }) => {
             })
           ) : (
             <p className={style.noResults}>
-              {query ? "No comments match your exact word." : "No comments found."}
+              {searchText
+                ? "No comments contain the entered phrase."
+                : "No comments found."}
             </p>
           )}
         </div>
 
+        {/* 👇 Lazy loading trigger */}
+        {visibleComments.length < filteredComments.length && (
+          <div ref={observerRef} className={style.loadingTrigger}>
+            <p className={style.loadingMore}>Scroll to load more...</p>
+          </div>
+        )}
+
+        {/* Load next page if available */}
         {nextPageToken && !loading && (
           <button
             onClick={() => fetchComments(nextPageToken)}
             className={style.loadMore}
           >
-            Load More Comments
+            Load More Comments from YouTube
           </button>
         )}
 
