@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import style from "../css/videoComments.module.css";
-
+// const YOUTUBE_API_KEY = "AIzaSyAvCFNw-ZJN693l5_16WGkXjLDiUs5IRTA";
+const apikey = process.env.REACT_APP_YOUTUBE_API_KEY;
+console.log("API Key:", apikey);
 const VideoComments = ({ videoId }) => {
   const [comments, setComments] = useState([]);
   const [displayedCount, setDisplayedCount] = useState(10);
@@ -20,7 +22,7 @@ const VideoComments = ({ videoId }) => {
       try {
         setLoading(true);
         setError(null);
-        const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=50&pageToken=${pageToken}&key=${process.env.YOUTUBE_API_KEY}`;
+        const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=50&pageToken=${pageToken}&key=${apikey}`;
         const res = await axios.get(url);
         const items = res.data.items || [];
 
