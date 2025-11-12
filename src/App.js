@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Route, BrowserRouter, Routes } from "react-router-dom";
+import { Route, BrowserRouter, Routes, Navigate } from "react-router-dom";
 import style from "./css/App.module.css";
 import Header from "./components/header";
 import Video from "./components/video";
@@ -30,6 +30,10 @@ function App() {
               element={<Video videoId={videoId} className={style.video} />}
             />
           )}
+          {!videoId && <Route
+              path="/:id"
+              element={<Navigate to="/" replace />}
+            />}
         </Routes>
       </BrowserRouter>
     </div>

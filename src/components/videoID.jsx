@@ -3,41 +3,63 @@ import { useNavigate } from "react-router-dom";
 import { ImCross } from "react-icons/im";
 import { useState } from "react";
 import MovingCards from "./movingCards";
+
 export default function VideoId({ setVideoId, videoId, setIsSubmit }) {
   const navigate = useNavigate();
   const [videoIdInput, setVideoIdInput] = useState(false);
   const [isFirst, setIsFirst] = useState(true);
+
+  const extractVideoId = (url) => {
+    try {
+      const regex =
+        /(?:v=|\/)([0-9A-Za-z_-]{10,})/;
+      const match = url.match(regex);
+      console.log(match);
+      return match ? match[1] : url.trim();
+    } catch {
+      return url.trim();
+    }
+  };
+
   const handleChange = (e) => {
-    setVideoId(e.target.value);
+    const rawValue = e.target.value;
+    const id = extractVideoId(rawValue);
+    setVideoId(id);
     setIsSubmit(false);
   };
-  function handleSubmit(e) {
+
+  const handleSubmit = (e) => {
     e.preventDefault();
+    if (!videoId) return;
     setIsSubmit(true);
     setVideoIdInput(false);
     navigate(`/${videoId}`);
-  }
-  function handleID() {
+  };
+
+  const handleID = () => {
     setIsFirst(false);
     setVideoIdInput(true);
-  }
-  function handleCancel() {
+  };
+
+  const handleCancel = () => {
     setVideoIdInput(false);
     setIsSubmit(false);
     setVideoId("");
-  }
+  };
+
   console.log(videoId);
+
   return (
     <div className={style.videoId}>
       {videoIdInput && (
         <form onSubmit={handleSubmit} className={style.form}>
           <ImCross onClick={handleCancel} style={{ position: "absolute" }} />
-          <h1 className={style.h1}> Video ID</h1>
+          <h1 className={style.h1}>Video Link</h1>
           <input
             type="text"
             value={videoId}
             onChange={handleChange}
-            placeholder="Enter YouTube video ID"
+            placeholder="Paste video link or ID"
             className={style.input}
             style={{ padding: "10px", fontSize: "16px" }}
             required
@@ -51,6 +73,7 @@ export default function VideoId({ setVideoId, videoId, setIsSubmit }) {
           </button>
         </form>
       )}
+
       {isFirst && (
         <>
           <p className={style.pStart}>WELCOME</p>
@@ -60,11 +83,13 @@ export default function VideoId({ setVideoId, videoId, setIsSubmit }) {
           </p>
         </>
       )}
+
       {!videoIdInput && (
         <button className={style.button} onClick={handleID}>
-          Enter Video ID
+          Enter Video Link
         </button>
       )}
+
       <div className={style.movingCards}>
         <MovingCards />
       </div>

@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import style from ".././css/videoData.module.css";
+import VideoComments from "./videoComments";
 const YOUTUBE_API_KEY = "AIzaSyAvCFNw-ZJN693l5_16WGkXjLDiUs5IRTA";
 
 const fetchVideoDetails = async (videoId) => {
-  //   console.log(videoId);
   const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet&key=${YOUTUBE_API_KEY}`;
-  //   console.log(url);
   try {
     const response = await axios.get(url);
     const videoDetails = response.data.items[0].snippet;
+    console.log(videoDetails);
     return {
       title: videoDetails.title,
       description: videoDetails.description,
