@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import style from ".././css/videoData.module.css";
-import VideoComments from "./videoComments";
 const YOUTUBE_API_KEY = "AIzaSyAvCFNw-ZJN693l5_16WGkXjLDiUs5IRTA";
 
 const fetchVideoDetails = async (videoId) => {

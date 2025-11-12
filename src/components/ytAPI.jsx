@@ -31,7 +31,7 @@ const YouTubePlayer = ({ videoId, setCurrentTimer, startTime, isChange }) => {
         playerRef.current.destroy();
       }
     };
-  }, [videoId]);
+  }, [videoId, startTime]);
 
   useEffect(() => {
     if (playerReady && playerRef.current && playerRef.current.seekTo) {

@@ -10,7 +10,7 @@ import VideoComments from "./videoComments.jsx";
 const Video = ({ videoId: propVideoId }) => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [videoId, setVideoId] = useState(propVideoId || id || "");
+  let videoId = (propVideoId || id || "");
 
   const [isView, setIsView] = useState(false);
   const [isAdd, setIsAdd] = useState(false);
