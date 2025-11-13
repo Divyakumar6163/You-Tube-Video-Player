@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import style from "../css/videoComments.module.css";
-// const YOUTUBE_API_KEY = "AIzaSyAvCFNw-ZJN693l5_16WGkXjLDiUs5IRTA";
+
 const apikey = process.env.REACT_APP_YOUTUBE_API_KEY;
-console.log("API Key:", apikey);
+
 const VideoComments = ({ videoId }) => {
   const [comments, setComments] = useState([]);
   const [displayedCount, setDisplayedCount] = useState(10);
@@ -11,18 +11,20 @@ const VideoComments = ({ videoId }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Search states
   const [searchInput, setSearchInput] = useState("");
   const [searchText, setSearchText] = useState("");
 
   const observerRef = useRef(null);
 
+  // ------------------ FETCH COMMENTS ------------------
   const fetchComments = useCallback(
     async (pageToken = "") => {
       try {
         setLoading(true);
         setError(null);
-        const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=50&pageToken=${pageToken}&key=${apikey}`;
+
+        const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=10&pageToken=${pageToken}&key=${apikey}`;
+
         const res = await axios.get(url);
         const items = res.data.items || [];
 
@@ -43,14 +45,16 @@ const VideoComments = ({ videoId }) => {
     [videoId]
   );
 
-   useEffect(() => {
+  // Reset on video change
+  useEffect(() => {
     setComments([]);
+    setDisplayedCount(10);
     setSearchInput("");
     setSearchText("");
-    setDisplayedCount(10);
     fetchComments();
   }, [videoId, fetchComments]);
 
+  // ------------------ SEARCH ------------------
   const getPlainText = (html) => {
     const tmp = document.createElement("div");
     tmp.innerHTML = html;
@@ -66,7 +70,6 @@ const VideoComments = ({ videoId }) => {
     return text.replace(regex, `<mark class="${style.highlight}">$1</mark>`);
   };
 
-  // ✅ Filter comments only when search is applied
   const filteredComments =
     searchText.trim() === ""
       ? comments
@@ -76,21 +79,29 @@ const VideoComments = ({ videoId }) => {
           return plainText.includes(searchText.toLowerCase());
         });
 
-  // ✅ Lazy loading handler
+  // ------------------ INFINITE SCROLL HANDLER ------------------
   const loadMoreVisible = useCallback(
     (entries) => {
       const [entry] = entries;
-      if (entry.isIntersecting) {
-        setDisplayedCount((prev) => {
-          // ⛔ Prevent unnecessary increments when already all visible
-          if (prev < filteredComments.length) {
-            return prev + 10;
-          }
-          return prev;
-        });
-      }
+      if (!entry.isIntersecting) return;
+
+      setDisplayedCount((prev) => {
+        const limit = filteredComments.length;
+
+        // Show next 10 comments from existing loaded list
+        if (prev < limit) {
+          return prev + 10;
+        }
+
+        // If no more visible comments but API has more pages
+        if (prev >= limit && nextPageToken && !loading) {
+          fetchComments(nextPageToken);
+        }
+
+        return prev;
+      });
     },
-    [filteredComments.length]
+    [filteredComments.length, nextPageToken, loading, fetchComments]
   );
 
   useEffect(() => {
@@ -99,15 +110,15 @@ const VideoComments = ({ videoId }) => {
       rootMargin: "0px",
       threshold: 1.0,
     });
+
     if (observerRef.current) observer.observe(observerRef.current);
     return () => observer.disconnect();
-  }, [loadMoreVisible, filteredComments.length]);
+  }, [loadMoreVisible]);
 
-  // ✅ Search triggers
+  // ------------------ Search handlers ------------------
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    const trimmed = searchInput.trim();
-    setSearchText(trimmed);
+    setSearchText(searchInput.trim());
     setDisplayedCount(10);
   };
 
@@ -118,14 +129,15 @@ const VideoComments = ({ videoId }) => {
   };
 
   const visibleComments = filteredComments.slice(0, displayedCount);
-  console.log("Filtered comments:", filteredComments);
-  console.log("Visible comments:", visibleComments);
+  console.log("Visible Comments Count:", visibleComments);
+  console.log("Total Filtered Comments Count:", filteredComments);
+  // ------------------ RENDER ------------------
   return (
     <div className={style.outerContainer}>
       <div className={style.container}>
         <h2 className={style.header}>Comments</h2>
 
-        {/* 🔍 Search bar */}
+        {/* SEARCH BAR */}
         <form className={style.searchContainer} onSubmit={handleSearchSubmit}>
           <div className={style.searchGroup}>
             <input
@@ -151,17 +163,18 @@ const VideoComments = ({ videoId }) => {
         </form>
 
         {error && <p className={style.error}>{error}</p>}
-
         {loading && comments.length === 0 && (
           <p className={style.loading}>Loading comments...</p>
         )}
 
+        {/* COMMENTS LIST */}
         <div className={style.commentsList}>
           {visibleComments.length > 0 ? (
             visibleComments.map((comment, index) => {
               const snippet = comment.snippet.topLevelComment.snippet;
               const plainText = getPlainText(snippet.textDisplay);
               const highlightedText = highlightText(plainText, searchText);
+
               return (
                 <div key={`${comment.id}-${index}`} className={style.comment}>
                   <img
@@ -181,9 +194,7 @@ const VideoComments = ({ videoId }) => {
 
                     <p
                       className={style.text}
-                      dangerouslySetInnerHTML={{
-                        __html: highlightedText,
-                      }}
+                      dangerouslySetInnerHTML={{ __html: highlightedText }}
                     ></p>
 
                     <div className={style.likes}>
@@ -202,26 +213,12 @@ const VideoComments = ({ videoId }) => {
           )}
         </div>
 
-        {/* 👇 Lazy loading trigger */}
-        {visibleComments.length < filteredComments.length && (
-          <div ref={observerRef} className={style.loadingTrigger}>
-            <p className={style.loadingMore}>Scroll to load more...</p>
-          </div>
-        )}
-
-        {/* Load next page if available */}
-        {nextPageToken && !loading && (
-          <button
-            onClick={() => fetchComments(nextPageToken)}
-            className={style.loadMore}
-          >
-            Load More Comments from YouTube
-          </button>
-        )}
-
-        {loading && comments.length > 0 && (
-          <p className={style.loadingMore}>Loading more...</p>
-        )}
+        {/* SINGLE SENTINEL FOR INFINITE SCROLL */}
+        <div ref={observerRef} className={style.loadingTrigger}>
+          <p className={style.loadingMore}>
+            {loading ? "Loading more..." : ""}
+          </p>
+        </div>
       </div>
     </div>
   );

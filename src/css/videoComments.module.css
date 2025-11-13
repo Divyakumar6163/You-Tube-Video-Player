@@ -243,3 +243,11 @@
     color: #777;
     font-style: italic;
 }
+
+.commentsWrapper {
+    height: 500px;
+    /* You can adjust height */
+    overflow-y: auto;
+    /* scrolling happens inside */
+    padding-right: 10px;
+}
