@@ -5,7 +5,10 @@
 /.pnp
 .pnp.js
 .venv
-/ml
+# /ml/dataset
+/ml/training
+/ml/inference
+/ml/models
 # testing
 /coverage
 
