@@ -10,7 +10,6 @@ const VideoComments = ({ videoId }) => {
   const [nextPageToken, setNextPageToken] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
   const [searchInput, setSearchInput] = useState("");
   const [searchText, setSearchText] = useState("");
 
@@ -27,7 +26,6 @@ const VideoComments = ({ videoId }) => {
 
         const res = await axios.get(url);
         const items = res.data.items || [];
-
         setComments((prev) => {
           const existingIds = new Set(prev.map((c) => c.id));
           const newItems = items.filter((c) => !existingIds.has(c.id));
@@ -42,7 +40,7 @@ const VideoComments = ({ videoId }) => {
         setLoading(false);
       }
     },
-    [videoId]
+    [videoId],
   );
 
   // Reset on video change
@@ -65,7 +63,7 @@ const VideoComments = ({ videoId }) => {
     if (!phrase.trim()) return text;
     const regex = new RegExp(
       `(${phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
-      "gi"
+      "gi",
     );
     return text.replace(regex, `<mark class="${style.highlight}">$1</mark>`);
   };
@@ -101,7 +99,7 @@ const VideoComments = ({ videoId }) => {
         return prev;
       });
     },
-    [filteredComments.length, nextPageToken, loading, fetchComments]
+    [filteredComments.length, nextPageToken, loading, fetchComments],
   );
 
   useEffect(() => {
@@ -127,16 +125,14 @@ const VideoComments = ({ videoId }) => {
     setSearchText("");
     setDisplayedCount(10);
   };
-
   const visibleComments = filteredComments.slice(0, displayedCount);
-  console.log("Visible Comments Count:", visibleComments);
-  console.log("Total Filtered Comments Count:", filteredComments);
-  // ------------------ RENDER ------------------
+  // console.log("Visible Comments Count:", visibleComments);
+  // console.log("Total Filtered Comments Count:", filteredComments);
+
   return (
     <div className={style.outerContainer}>
       <div className={style.container}>
         <h2 className={style.header}>Comments</h2>
-
         {/* SEARCH BAR */}
         <form className={style.searchContainer} onSubmit={handleSearchSubmit}>
           <div className={style.searchGroup}>

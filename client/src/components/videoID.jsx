@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ImCross } from "react-icons/im";
 import { useState } from "react";
 import MovingCards from "./movingCards";
-
+import axios from "axios";
 export default function VideoId({ setVideoId, videoId, setIsSubmit }) {
   const navigate = useNavigate();
   const [videoIdInput, setVideoIdInput] = useState(false);
@@ -11,8 +11,7 @@ export default function VideoId({ setVideoId, videoId, setIsSubmit }) {
 
   const extractVideoId = (url) => {
     try {
-      const regex =
-        /(?:v=|\/)([0-9A-Za-z_-]{10,})/;
+      const regex = /(?:v=|\/)([0-9A-Za-z_-]{10,})/;
       const match = url.match(regex);
       console.log(match);
       return match ? match[1] : url.trim();
@@ -28,7 +27,7 @@ export default function VideoId({ setVideoId, videoId, setIsSubmit }) {
     setIsSubmit(false);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!videoId) return;
     setIsSubmit(true);

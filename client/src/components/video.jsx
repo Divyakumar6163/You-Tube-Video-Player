@@ -1,17 +1,17 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { CiCirclePlus } from "react-icons/ci";
-import AddNotes from "./addNote";
-import ViewNotes from "./viewNotes";
+import AddNotes from "./addNote.jsx";
+import ViewNotes from "./viewNotes.jsx";
 import style from ".././css/video.module.css";
 import YouTubePlayer from "./ytAPI.jsx";
 import VideoDetails from "./videoData.jsx";
 import VideoComments from "./videoComments.jsx";
+import SentimentAnalysis from "./SentimentAnalysis";
 const Video = ({ videoId: propVideoId }) => {
   const navigate = useNavigate();
   const { id } = useParams();
-  let videoId = (propVideoId || id || "");
-
+  let videoId = propVideoId || id || "";
   const [isView, setIsView] = useState(false);
   const [isAdd, setIsAdd] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -34,7 +34,7 @@ const Video = ({ videoId: propVideoId }) => {
       setChecking(true);
       try {
         const res = await fetch(
-          `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`
+          `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`,
         );
 
         if (res.ok) {
@@ -109,11 +109,11 @@ const Video = ({ videoId: propVideoId }) => {
           isChange={isChange}
         />
       </div>
-
       <div className={style.videoFrame}>
         <VideoDetails videoId={videoId} />
       </div>
 
+      <SentimentAnalysis videoId={videoId} />
       <div className={style.videoMain}>
         <div className={style.title}>
           <div>
@@ -162,7 +162,7 @@ const Video = ({ videoId: propVideoId }) => {
           )}
         </div>
       </div>
-      <VideoComments videoId={videoId}/>
+      <VideoComments videoId={videoId} />
     </div>
   );
 };
