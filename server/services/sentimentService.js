@@ -1,7 +1,7 @@
 const { spawn } = require("child_process");
 const path = require("path");
 
-const pythonExecutable = path.join(__dirname, "../.venv/Scripts/python.exe");
+const pythonExecutable = process.env.PYTHON_PATH || "python3";
 
 const analyzeComments = (comments) => {
   return new Promise((resolve, reject) => {

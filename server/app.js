@@ -8,6 +8,18 @@ const app = express();
 
 // Middleware
 app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "https://you-tube-video-player-chi.vercel.app",
+      "http://localhost:5000",
+      "https://you-tube-video-player.onrender.com",
+      "https://you-tube-video-player.onrender.com/api",
+    ],
+    credentials: true,
+  }),
+);
 app.use(express.json());
 
 // Routes

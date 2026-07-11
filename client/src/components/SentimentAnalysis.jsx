@@ -35,9 +35,12 @@ const SentimentAnalysis = ({ videoId }) => {
 
       console.log("Analyzing video...");
 
-      const response = await axios.post("http://localhost:5000/api/sentiment", {
-        videoId,
-      });
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/sentiment`,
+        {
+          videoId,
+        },
+      );
 
       console.log(response.data);
       setAnalysis(response.data);
