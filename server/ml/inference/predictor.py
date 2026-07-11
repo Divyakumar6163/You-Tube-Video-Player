@@ -14,15 +14,12 @@ from transformers import (
 
 CURRENT_DIR = Path(__file__).resolve().parent
 
-MODEL_PATH = (
-    CURRENT_DIR.parent
-    / "models"
-    / "distilbert_youtube_sentiment"
-)
+MODEL_NAME = "Divya-Kumar/youtube-sentiment-distilbert"
 
-# ==========================================
-# Device
-# ==========================================
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+
+model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME)
+
 
 DEVICE = torch.device(
     "cuda" if torch.cuda.is_available() else "cpu"
@@ -33,22 +30,6 @@ print(
     file=sys.stderr,
 )
 
-# ==========================================
-# Load Tokenizer
-# ==========================================
-
-tokenizer = AutoTokenizer.from_pretrained(
-    MODEL_PATH
-)
-
-# ==========================================
-# Load Model
-# ==========================================
-
-model = AutoModelForSequenceClassification.from_pretrained(
-    MODEL_PATH
-)
-
 model.to(DEVICE)
 
 model.eval()
@@ -57,12 +38,6 @@ print(
     "Model Loaded Successfully.",
     file=sys.stderr,
 )
-
-
-# ==========================================
-# Predictor Class
-# ==========================================
-
 
 def clean_comment(text):
     """
