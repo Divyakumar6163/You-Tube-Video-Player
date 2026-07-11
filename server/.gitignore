@@ -6,8 +6,8 @@
 .pnp.js
 .venv
 # /ml/dataset
-/ml/training
-/ml/inference
+# /ml/training
+# /ml/inference
 /ml/models
 # testing
 /coverage
